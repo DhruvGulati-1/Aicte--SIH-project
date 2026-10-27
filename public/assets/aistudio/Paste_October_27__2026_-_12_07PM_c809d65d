@@ -1,0 +1,802 @@
+# MASTER BUILD PROMPT — REGULAFLOW AI
+## SIH26262: AI-Powered AICTE Approval Workflow Automation & Compliance Monitoring Platform
+
+Act as a senior full-stack engineer, UI/UX designer, AI engineer, database architect, and DevOps engineer. Build a complete, functional, production-minded web application named **RegulaFlow AI**.
+
+Do not build merely a landing page, static dashboard, or UI prototype. Build an integrated application with working navigation, authentication, forms, API calls, database persistence, role-based access, workflow management, analytics, and AI-assisted features.
+
+If an external service or credential is unavailable, implement a clearly labeled development mode and explain exactly how to connect the real service. Never pretend that an unconnected integration is working.
+
+---
+
+# 1. PROJECT OVERVIEW
+
+**Product name:** RegulaFlow AI  
+**Hackathon:** Smart India Hackathon  
+**Problem ID:** SIH26262  
+**Domain:** Education technology, government workflow automation, regulatory compliance  
+**Primary purpose:** Digitize and streamline institution approval workflows, document scrutiny, expert visits, regulatory compliance, notifications, and monitoring.
+
+### Problem to solve
+
+Institution approval workflows can involve repetitive document checks, multiple review stages, manual tracking, fragmented records, compliance deadlines, and delays in communication.
+
+RegulaFlow AI should help authorized users:
+
+- Track institution applications from submission to final decision.
+- Organize document scrutiny and identify missing or inconsistent information.
+- Coordinate expert visits and evaluation committee activities.
+- Monitor compliance requirements and document expiry.
+- Prioritize overdue and high-risk applications.
+- Provide AI-assisted explanations based on verified regulatory documents.
+- Maintain transparent audit trails and role-specific dashboards.
+- Reduce repetitive administrative work without replacing authorized human decision-makers.
+
+**Important:** This is a hackathon MVP, not an official AICTE system. Do not claim official AICTE integration, real regulatory approval authority, or access to government databases unless those integrations are explicitly configured and verified.
+
+# 2. REQUIRED TECHNOLOGY STACK
+
+Use the following architecture.
+
+### Frontend
+- React with Vite.
+- TypeScript.
+- Tailwind CSS.
+- React Router.
+- Recharts for charts.
+- Lucide React for icons.
+- React Hook Form and Zod for form validation.
+- A reusable component architecture.
+- Responsive design for desktop, tablet, and mobile.
+
+### Backend
+- Node.js 20+.
+- Express.js.
+- PostgreSQL.
+- `pg` for database access.
+- JWT authentication.
+- bcryptjs for password hashing.
+- Zod for request validation.
+- Helmet, CORS, and rate limiting.
+- REST APIs with consistent JSON responses.
+
+### AI
+- Google Gemini API through a server-side integration.
+- Environment-based API key configuration.
+- Structured JSON outputs validated before use.
+- Retrieval-augmented generation (RAG) for regulatory document assistance.
+- Embeddings and a vector retrieval system only when properly configured.
+- Rule-based fallbacks when AI services are unavailable.
+
+### Deployment
+- Frontend deployable to Vercel or another static hosting platform.
+- Backend deployable to Render.
+- PostgreSQL hosted database.
+- Optional n8n workflows for AI-agent orchestration.
+- Environment variables for all secrets and deployment-specific settings.
+
+Do not expose Gemini API keys, database passwords, JWT secrets, or private credentials in browser code.
+
+# 3. DESIGN AND USER EXPERIENCE
+
+Create a professional government-tech SaaS dashboard with a premium, polished visual design.
+
+### Visual direction
+- Dark navy and deep indigo sidebar.
+- White or very light grey content surfaces.
+- Blue and violet accents.
+- Subtle gradients used sparingly.
+- Clean typography, generous spacing, clear hierarchy.
+- Rounded cards, subtle borders, restrained shadows.
+- Clear status chips and progress indicators.
+- Accessible contrast and visible keyboard focus.
+- Responsive sidebar that collapses on smaller screens.
+
+Avoid excessive glassmorphism, excessive animations, oversized empty cards, fake data visualizations, and generic template aesthetics.
+
+### Application shell
+
+Build:
+- Collapsible left navigation.
+- Top header with page title and breadcrumbs.
+- Global search.
+- Notifications menu.
+- User profile menu.
+- Role badge.
+- Main content region.
+- Loading skeletons.
+- Empty states.
+- Error states.
+- Toast notifications.
+- Confirmation dialogs for consequential actions.
+
+Every visible navigation item must lead to a real page. Every button must perform a meaningful action or clearly indicate that a feature requires configuration.
+
+# 4. AUTHENTICATION AND USER ROLES
+
+Create login, logout, current-user session restoration, protected routes, and role-based authorization.
+
+Support these roles:
+
+1. **ADMIN**
+   - Manage users and system settings.
+   - View system-wide dashboards.
+   - Manage institutions and configuration.
+   - Access authorized audit records.
+
+2. **COMPETENT_AUTHORITY**
+   - Review eligible applications.
+   - View relevant workflow history.
+   - Make final decisions only through explicitly authorized decision workflows.
+
+3. **OFFICER**
+   - Review assigned applications.
+   - Record scrutiny findings.
+   - Request corrections and move applications through permitted workflow stages.
+
+4. **INSTITUTION**
+   - View its own profile and applications.
+   - Submit applications.
+   - Track status and requested corrections.
+   - Submit resubmissions and compliance information.
+
+5. **EVC**
+   - View assigned expert visits.
+   - Manage visit schedules.
+   - Record visit outcomes and reports.
+
+### Security requirements
+- Hash passwords with bcryptjs.
+- Use JWT expiration.
+- Validate all inputs on the server.
+- Enforce permissions in backend middleware, not only in the UI.
+- Prevent institutions from accessing other institutions' records.
+- Do not store plaintext passwords.
+- Do not hardcode secrets.
+- Do not provide public self-registration with privileged roles.
+- If public institution registration is supported, assign only the INSTITUTION role and require verification.
+- Use secure session handling and avoid storing sensitive tokens in localStorage where possible.
+- Never ship development demo credentials into a production deployment.
+
+Provide a development-only seed script for sample users. Require explicit opt-in for seeding and disable demo seeding by default in production.
+
+# 5. DASHBOARD
+
+Build a live dashboard with data loaded from backend APIs.
+
+### KPI cards
+- Total institutions.
+- Applications received.
+- Applications under scrutiny.
+- Applications awaiting institution response.
+- Applications pending expert evaluation.
+- Applications overdue.
+- Compliance items due soon.
+- Applications completed.
+
+### Charts
+- Application volume over time.
+- Application status distribution.
+- Applications by workflow stage.
+- Average processing time.
+- Compliance completion rate.
+- Overdue applications by age.
+- Institution distribution by state.
+
+### Dashboard functionality
+- Date-range filters.
+- Status filters.
+- State and institution filters where authorized.
+- Clickable KPI cards that open filtered records.
+- Recent application activity.
+- Upcoming expert visits.
+- Recent notifications.
+- Overdue compliance alerts.
+
+Do not hardcode chart values. Use API data. If no records exist, show a useful empty state rather than fabricated statistics.
+
+# 6. INSTITUTION MANAGEMENT
+
+Create an Institutions page with:
+
+- Search by institution name or official ID.
+- Filters by state, district, institution type, and record source.
+- Sortable, paginated table.
+- Institution detail page.
+- Contact and address information when available.
+- Linked applications.
+- Compliance history.
+- Document records.
+- Source and last-verified date for imported public records.
+
+Support CSV import with preview, validation, duplicate detection, error reporting, and confirmation before saving.
+
+Expected institution fields:
+- `officialId`
+- `name`
+- `state`
+- `district`
+- `address`
+- `institutionType`
+- `sourceName`
+- `sourceUrl`
+- `sourceSnapshotDate`
+
+Only import verified public data and preserve its source. Do not present historical public records as current approval status.
+
+# 7. APPLICATION MANAGEMENT
+
+Create a fully functional Applications module.
+
+### Application listing
+Include:
+- Application ID.
+- Institution name.
+- Application type.
+- Submission date.
+- Current stage.
+- Assigned officer.
+- Priority.
+- SLA or due date, if configured.
+- Status.
+- Last updated timestamp.
+
+Include search, pagination, sorting, filters, and saved filter presets.
+
+### Application detail page
+
+Create tabs for:
+1. Overview.
+2. Documents.
+3. Scrutiny.
+4. Workflow.
+5. Expert evaluation.
+6. Compliance.
+7. Activity history.
+8. AI assistance.
+
+Display a chronological timeline of all permitted workflow transitions.
+
+### Application submission wizard
+
+Create a multi-step form:
+1. Select or confirm institution.
+2. Select application type.
+3. Enter institution details.
+4. Enter program and intake details.
+5. Upload required documents.
+6. Review declarations.
+7. Validate and submit.
+
+Implement draft saving, validation, confirmation, and submission tracking.
+
+File upload must use secure server-side storage or a configured object-storage service. Validate file type and size, use safe file names, and prevent unauthorized access. If file storage has not been configured, provide a clear setup message and do not pretend files were uploaded.
+
+### Workflow stages
+
+Support configurable workflows using these path values:
+- `ONLY_SCRUTINY`
+- `SCRUTINY_EVC`
+- `EVC_SAC_SHC`
+- `ONLY_EVC`
+
+Create appropriate stage transitions, including scrutiny, correction requests, institution resubmission, expert evaluation, committee review where configured, and final decision.
+
+Enforce valid transitions and role permissions on the backend. Keep a record of every transition, its actor, timestamp, and reason.
+
+Never automatically approve or reject an application based solely on AI output.
+
+# 8. DOCUMENT SCRUTINY
+
+Create a document scrutiny workspace.
+
+Features:
+- Required-document checklist by application type.
+- Upload and view authorized documents.
+- Document metadata.
+- Document status: pending, uploaded, under review, verified, rejected, or correction required.
+- Reviewer comments.
+- Missing-document detection.
+- Expiry date tracking.
+- Resubmission comparison where supported.
+- Audit history for verification changes.
+
+### AI-assisted document scrutiny
+
+When a supported document extraction service is configured:
+1. Extract relevant text.
+2. Identify expected fields.
+3. Compare extracted values with application data.
+4. Flag missing fields and potential inconsistencies.
+5. Return structured findings with evidence references.
+6. Let an authorized officer accept, dismiss, or correct each finding.
+
+AI findings must be labeled as suggestions, not verified facts. Never mark a document as officially verified solely because an AI model says it is valid.
+
+# 9. COMPLIANCE MONITORING
+
+Build a Compliance module with:
+
+- Compliance requirement catalog.
+- Institution-wise compliance records.
+- Required evidence.
+- Submission date.
+- Due date.
+- Expiry date.
+- Verification status.
+- Assigned reviewer.
+- Comments and evidence references.
+- Upcoming deadlines.
+- Overdue items.
+- Compliance history.
+
+Implement a backend scheduled job for daily expiry and deadline checks.
+
+Generate in-app notifications for:
+- Upcoming deadlines.
+- Expiring documents.
+- Overdue submissions.
+- Newly assigned reviews.
+- Requested corrections.
+- Workflow stage changes.
+
+Prevent duplicate notifications for the same event. Use email only when a real email provider has been configured.
+
+# 10. EXPERT VISIT AND EVALUATION COMMITTEE MODULE
+
+Build an EVC workspace with:
+- Visit ID.
+- Related institution and application.
+- Assigned evaluators.
+- Scheduled date and time.
+- Visit status.
+- Location or meeting details where applicable.
+- Checklist.
+- Evaluation notes.
+- Findings.
+- Evidence attachments.
+- Report submission.
+- Completion timestamp.
+
+Support:
+- Scheduling.
+- Rescheduling.
+- Cancellation with reason.
+- Visit completion.
+- Report submission.
+- Authorized review of the submitted report.
+
+Use server-side validation and record all meaningful changes in the audit log.
+
+# 11. FIVE AI AGENTS
+
+Implement an AI-agent architecture with five distinct, testable services. Each agent should have a defined input schema, output schema, error handling, audit metadata, and permission boundaries.
+
+## Agent 1: Application Scrutiny Agent
+Responsibilities:
+- Analyze extracted document text.
+- Check required fields and document presence.
+- Compare values across submitted documents.
+- Identify inconsistencies.
+- Return findings with evidence and confidence.
+- Recommend follow-up questions for a human reviewer.
+
+Output example:
+{
+  "agent": "application_scrutiny",
+  "findings": [
+    {
+      "type": "missing_field",
+      "field": "exampleField",
+      "evidence": "Evidence excerpt or document reference",
+      "confidence": 0.92,
+      "recommendation": "Request clarification"
+    }
+  ],
+  "requires_human_review": true
+}
+
+Never fabricate evidence or claim to have inspected an unavailable file.
+
+## Agent 2: Compliance Monitoring Agent
+Responsibilities:
+- Evaluate configured compliance rules.
+- Identify upcoming deadlines.
+- Flag expired documents.
+- Produce a list of outstanding requirements.
+- Recommend reminders and corrective actions.
+
+Use deterministic date calculations for deadlines. Use AI only where interpretation is necessary.
+
+## Agent 3: Workflow Coordination Agent
+Responsibilities:
+- Summarize current workflow state.
+- Identify the next permitted action.
+- Recommend task assignments based on configured rules.
+- Identify stalled workflows.
+- Suggest reminders and escalations.
+
+It must never bypass backend transition validation or authorize its own actions.
+
+## Agent 4: Risk and Prioritization Agent
+Responsibilities:
+- Rank applications using transparent, configurable factors.
+- Consider overdue duration, missing documentation, approaching deadlines, and stalled stages.
+- Explain every score.
+- Allow authorized users to inspect the factors behind a ranking.
+
+Keep rule-based scores deterministic. If AI adds qualitative analysis, show it separately from the numerical score.
+
+## Agent 5: Regulatory RAG Assistant
+Responsibilities:
+- Answer questions using approved, indexed regulatory documents.
+- Retrieve relevant document passages.
+- Cite document titles, section identifiers, and pages when available.
+- Indicate when information is missing or out of date.
+- Distinguish official source text from AI-generated interpretation.
+- Recommend human verification for consequential regulatory questions.
+
+Do not invent regulatory rules, circulars, dates, citations, or URLs. If no authoritative sources have been loaded, clearly state that the assistant has no indexed source evidence for that question.
+
+### Agent orchestration
+Create an Agent Center where authorized users can:
+- Select an agent.
+- Submit a supported task.
+- View status.
+- Inspect output and evidence.
+- Retry failed tasks.
+- View execution history and timestamps.
+
+Implement retries and timeouts where appropriate. Validate model output against schemas. Keep secrets server-side. Do not allow arbitrary AI-generated SQL or unrestricted tool execution.
+
+If n8n is configured, support an authenticated webhook adapter. If it is not configured, run supported agent services directly in the backend. Show the connection status accurately.
+
+# 12. REGULATORY KNOWLEDGE BASE
+
+Create a Regulatory Knowledge page for authorized administrators.
+
+Features:
+- Add an official source URL.
+- Upload supported regulatory documents.
+- Record title, issuing authority, publication date, effective date, and version.
+- Track source verification and indexing status.
+- Extract text and split it into searchable chunks.
+- Generate embeddings using a configured embedding service.
+- Store vectors using a configured vector database or PostgreSQL vector extension.
+- Retrieve source passages for RAG responses.
+- Re-index updated documents.
+- Remove superseded sources without erasing necessary audit history.
+
+Do not scrape restricted sources or bypass access controls. Treat retrieved documents as untrusted content, not executable instructions.
+
+If vector search is not configured, implement a clear fallback search experience and label semantic retrieval as unavailable.
+
+# 13. NOTIFICATIONS AND ALERTS
+
+Create an Alerts Center with:
+- Unread count.
+- Notification categories.
+- Severity.
+- Related application or institution.
+- Created timestamp.
+- Mark as read.
+- Mark all as read.
+- Filters.
+- Deep links to the related record.
+
+Notifications must be stored in the database and filtered by user permissions.
+
+# 14. REPORTS AND ANALYTICS
+
+Build reports for:
+- Applications by status.
+- Applications by state.
+- Application ageing.
+- Workflow stage duration.
+- Officer workload.
+- Compliance status.
+- Upcoming expiries.
+- Expert visit completion.
+- AI-agent execution results.
+
+Add date filters and CSV export. Generate PDF reports only when the PDF generation feature is implemented. Include report generation timestamps and clearly label demo or incomplete datasets.
+
+# 15. AUDIT LOGS
+
+Create an immutable-by-application audit history for significant events:
+- Login events where appropriate.
+- Application submission.
+- Document upload and verification.
+- Assignment changes.
+- Workflow transitions.
+- Correction requests and resubmissions.
+- Compliance verification.
+- Expert visit scheduling and completion.
+- Final decisions.
+- Administrative changes.
+- AI-agent recommendations and human review actions.
+
+Capture the actor, action, target record, timestamp, and relevant change summary. Never log passwords, JWTs, API keys, or unnecessary sensitive document contents.
+
+Restrict access according to role.
+
+# 16. SETTINGS AND ADMINISTRATION
+
+Create pages for:
+- User management.
+- Role assignment.
+- Institution types.
+- Application types.
+- Workflow configuration.
+- Required-document checklists.
+- Compliance rules.
+- SLA settings.
+- Notification preferences.
+- AI provider status.
+- n8n connection status.
+- Regulatory knowledge sources.
+- Audit settings.
+
+Every setting must persist to the backend or clearly state that it is not yet connected.
+
+# 17. BACKEND INTEGRATION
+
+The project already has a Node.js, Express, and PostgreSQL backend starter.
+
+The current local API base is:
+
+`http://localhost:4000/api/v1`
+
+Use the following existing endpoint contracts wherever supported:
+
+- `GET /health`
+- `POST /auth/login`
+- `GET /auth/me`
+- `GET /institutions`
+- `POST /institutions/import`
+- `POST /applications`
+- `GET /applications`
+- `GET /applications/:id`
+- `POST /applications/:id/revert`
+- `POST /applications/:id/resubmit`
+- `POST /applications/:id/complete-stage`
+- `GET /applications/:id/history`
+- `GET /compliance`
+- `POST /compliance`
+- `POST /compliance/:id/verify`
+- `GET /documents/expiring?days=30`
+- `GET /evc`
+- `POST /evc`
+- `PATCH /evc/:id/schedule`
+- `POST /evc/:id/complete`
+- `GET /notifications`
+- `PATCH /notifications/:id/read`
+- `GET /dashboard/summary`
+- `GET /dashboard/ageing`
+- `GET /audit-logs`
+
+Use the exact request and response formats implemented by the backend. Inspect the source code or API responses before integrating. Do not assume that an endpoint supports extra fields or actions that have not been implemented.
+
+Create a centralized API client using:
+
+`VITE_API_BASE_URL`
+
+For local development, this may point to `http://localhost:4000/api/v1`. For deployment, set it to the actual deployed backend API URL.
+
+Handle:
+- Loading states.
+- HTTP errors.
+- Unauthorized responses.
+- Expired sessions.
+- Empty results.
+- Network failures.
+- Validation errors.
+
+Do not silently replace failed API calls with mock data.
+
+If an endpoint is missing, implement it in the backend with appropriate database migrations, validation, authorization, and tests, or clearly mark the feature as unavailable until that implementation is complete.
+
+# 18. DATABASE DESIGN
+
+Inspect the existing PostgreSQL schema first. Reuse compatible tables and create safe migrations for missing entities.
+
+The final data model should support:
+- Users and roles.
+- Institutions.
+- Applications.
+- Application workflow history.
+- Documents and document metadata.
+- Scrutiny findings.
+- Compliance requirements.
+- Institution compliance records.
+- Expert visits and evaluation reports.
+- Notifications.
+- Audit logs.
+- Regulatory source documents and chunks.
+- AI-agent tasks and executions.
+- Workflow configuration.
+
+Requirements:
+- Use UUIDs or consistent primary keys.
+- Add foreign keys and useful indexes.
+- Use transactions for multi-step state changes.
+- Add appropriate unique constraints.
+- Store timestamps consistently.
+- Use migrations rather than relying on ad hoc schema changes.
+- Never drop existing user data during deployment.
+- Use parameterized SQL queries.
+
+# 19. ERROR HANDLING AND TESTING
+
+Add:
+- Centralized backend error middleware.
+- Request validation.
+- A consistent error response format.
+- Structured server logs.
+- Health checks.
+- Graceful shutdown.
+- Database connection error handling.
+- Frontend error boundaries.
+- Tests for authentication.
+- Tests for role permissions.
+- Tests for application workflow transitions.
+- Tests for invalid inputs.
+- Tests for database-backed endpoints.
+- Tests for the five agent output schemas.
+- A smoke test for the production health endpoint.
+
+Do not suppress errors merely to make the application appear functional.
+
+# 20. ENVIRONMENT CONFIGURATION
+
+Create `.env.example` containing placeholders only.
+
+Backend variables should include, where applicable:
+
+- `PORT`
+- `NODE_ENV`
+- `DATABASE_URL`
+- `JWT_SECRET`
+- `JWT_EXPIRES_IN`
+- `FRONTEND_ORIGIN`
+- `GEMINI_API_KEY`
+- `N8N_WEBHOOK_URL`
+- `N8N_WEBHOOK_SECRET`
+- `ENABLE_DEMO_SEED`
+
+Never place actual secrets in source files or `.env.example`.
+
+The server must listen on `process.env.PORT || 4000` and bind appropriately for Render hosting.
+
+Use the hosted PostgreSQL URL in production. Never use `localhost` as the production database host unless the database truly runs in the same environment.
+
+Disable demo seeding by default in production. Provide clear database migration and optional development seed commands.
+
+# 21. REQUIRED PROJECT STRUCTURE
+
+Organize the project cleanly, preferably as a monorepo:
+
+regulaflow-ai/
+  frontend/
+    src/
+      components/
+      layouts/
+      pages/
+      features/
+      hooks/
+      services/
+      types/
+      utils/
+    public/
+    package.json
+    .env.example
+  backend/
+    src/
+      routes/
+      middleware/
+      services/
+      agents/
+      db/
+      utils/
+      server.js
+    migrations/
+    tests/
+    package.json
+    .env.example
+  README.md
+  .gitignore
+
+Adapt the structure if the existing backend has a different layout. Do not duplicate the backend or accidentally break existing imports.
+
+# 22. IMPLEMENTATION ORDER
+
+Work in these phases:
+
+**Phase 1 — Inspect and plan**
+- Inspect existing project files.
+- Identify working endpoints, database tables, dependencies, and gaps.
+- Preserve working backend behavior.
+- Present a concise implementation plan.
+
+**Phase 2 — Foundation**
+- Set up the frontend and routing.
+- Implement the design system.
+- Configure API integration.
+- Connect authentication and role-based navigation.
+
+**Phase 3 — Core modules**
+- Dashboard.
+- Institutions.
+- Applications.
+- Document scrutiny.
+- Workflow management.
+- Compliance.
+- EVC.
+- Notifications.
+- Audit logs.
+- Reports.
+
+**Phase 4 — AI**
+- Implement the five agent services.
+- Connect Gemini securely on the backend.
+- Implement source-grounded RAG.
+- Add agent execution history and human review.
+
+**Phase 5 — Validation**
+- Run frontend and backend builds.
+- Run automated tests.
+- Fix compile errors, missing imports, invalid routes, and schema mismatches.
+- Verify database migrations.
+- Verify API integration.
+- Verify the production start command.
+- Document any remaining blockers.
+
+**Phase 6 — Deployment**
+- Prepare Render backend configuration.
+- Prepare frontend hosting configuration.
+- Document PostgreSQL setup.
+- Document required environment variables.
+- Document CORS configuration.
+- Provide deployment and smoke-test instructions.
+
+# 23. ACCEPTANCE CRITERIA
+
+The project is not complete until the following are true:
+
+1. The frontend builds without errors.
+2. The backend starts using its documented production command.
+3. The backend health endpoint responds successfully.
+4. The frontend connects to the configured API.
+5. Login works with valid seeded development credentials.
+6. Invalid credentials are rejected.
+7. Role restrictions are enforced by the backend.
+8. Application records persist in PostgreSQL.
+9. Workflow changes persist and create history records.
+10. Institution users cannot access other institutions' private records.
+11. Compliance deadlines and alerts use actual configured dates.
+12. AI responses identify their source evidence or clearly state that evidence is unavailable.
+13. AI cannot independently make final regulatory approval decisions.
+14. Failed integrations show actionable errors.
+15. The README explains setup, configuration, tests, and deployment.
+16. No secrets are committed.
+17. All unfinished features are documented honestly.
+
+# 24. FINAL INSTRUCTIONS
+
+Start by inspecting the existing project files. Then implement the application in manageable, testable steps.
+
+Prioritize a fully functioning core workflow over adding many superficial features. Do not replace working code unnecessarily. Do not fabricate successful API responses. Do not claim tests passed unless they were actually run.
+
+If the entire application cannot fit into one generation, create the foundation first and continue implementing the remaining modules in subsequent steps while preserving the existing files and architecture.
+
+At the end, provide:
+- The complete project file tree.
+- The implemented features.
+- The exact commands to install and run the frontend and backend.
+- The environment variables to configure.
+- The database migration and seed instructions.
+- The tests actually executed and their results.
+- The precise steps to deploy the backend to Render and the frontend to Vercel.
+- Any remaining integrations or features that still require configuration.
+
+Build RegulaFlow AI as a coherent, maintainable, accessible, secure, and demonstrably functional hackathon MVP.

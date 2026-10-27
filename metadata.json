@@ -1,0 +1,6 @@
+{
+  "name": "RegulaFlow AI",
+  "description": "AI-Powered AICTE Approval Workflow Automation & Compliance Monitoring Platform (SIH26262)",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
