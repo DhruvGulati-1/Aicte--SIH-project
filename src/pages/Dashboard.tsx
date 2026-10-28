@@ -27,6 +27,7 @@ import {
   Cell
 } from 'recharts';
 import { api } from '../services/api.js';
+import { useAuth } from '../context/AuthContext.js';
 import { StatusBadge } from '../components/common/StatusBadge.js';
 import { ApplicationHistory, EvcVisit } from '../types/index.js';
 
@@ -35,6 +36,7 @@ const STAGE_COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#3b82f6', '#10b981'];
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [summary, setSummary] = useState<any>(null);
   const [ageingList, setAgeingList] = useState<any[]>([]);
@@ -107,6 +109,43 @@ export const Dashboard: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Institution Role Banner */}
+      {user?.role === 'INSTITUTION' && (
+        <div className="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-5 text-white shadow-lg border border-blue-800/60">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 border border-blue-400/30 text-[11px] font-bold uppercase tracking-wider">
+                  Logged In as Institution Portal User
+                </span>
+                <span className="text-xs text-slate-300 font-mono">PID: 1-10928374</span>
+              </div>
+              <h2 className="text-lg font-extrabold tracking-tight">
+                Delhi Institute of Engineering & Advanced Technology
+              </h2>
+              <p className="text-xs text-slate-300">
+                Dean of Academic Operations: <span className="font-semibold text-white">{user.name}</span> ({user.email}) · South Delhi, NRO Region
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => navigate('/applications')}
+                className="px-3.5 py-2 text-xs font-bold rounded-lg bg-white text-blue-900 hover:bg-blue-50 transition-colors shadow-sm cursor-pointer"
+              >
+                Track Campus Applications
+              </button>
+              <button
+                onClick={() => navigate('/courses')}
+                className="px-3.5 py-2 text-xs font-bold rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white border border-blue-400/40 transition-colors cursor-pointer"
+              >
+                AICTE Course Catalog
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 8 Clickable KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">

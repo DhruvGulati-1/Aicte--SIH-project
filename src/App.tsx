@@ -14,10 +14,13 @@ import { Compliance } from './pages/Compliance.js';
 import { EvcManagement } from './pages/EvcManagement.js';
 import { AgentCenter } from './pages/AgentCenter.js';
 import { RegulatoryKnowledge } from './pages/RegulatoryKnowledge.js';
+import { CoursesDirectory } from './pages/CoursesDirectory.js';
+import { GuidelinesExplorer } from './pages/GuidelinesExplorer.js';
 import { Reports } from './pages/Reports.js';
 import { AuditLogs } from './pages/AuditLogs.js';
 import { SettingsPage } from './pages/Settings.js';
 import { Login } from './pages/Login.js';
+import { AicteOfficialPortal } from './pages/AicteOfficialPortal.js';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -54,6 +57,9 @@ export default function App() {
             }
           >
             <Route index element={<Dashboard />} />
+            <Route path="official" element={<AicteOfficialPortal />} />
+            <Route path="courses" element={<CoursesDirectory />} />
+            <Route path="guidelines" element={<GuidelinesExplorer />} />
             <Route path="applications" element={<Applications />} />
             <Route path="applications/new" element={<NewApplicationWizard />} />
             <Route path="applications/:id" element={<ApplicationDetail />} />

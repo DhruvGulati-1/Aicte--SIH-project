@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: regulaflow-aicte
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install --legacy-peer-deps && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ENABLE_DEMO_SEED
+        value: "true"
+      - key: PORT
+        value: "10000"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false

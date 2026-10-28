@@ -13,7 +13,9 @@ import {
   AgentComplianceResult,
   AgentWorkflowResult,
   AgentRiskResult,
-  AgentRagResult
+  AgentRagResult,
+  AicteCourse,
+  AicteGuidelineChapter
 } from '../types/index.js';
 
 // Base API URL default to /api/v1 (or root fallback)
@@ -246,5 +248,56 @@ export const api = {
     }),
 
   // Settings
-  getSettings: () => fetchJson<any>('/settings')
+  getSettings: () => fetchJson<any>('/settings'),
+
+  // AICTE Norms & Courses
+  getCourses: (params?: { program?: string; level?: string; emerging?: boolean; search?: string }) => {
+    const q = new URLSearchParams(params as any).toString();
+    return fetchJson<{ total: number; courses: AicteCourse[] }>(`/courses${q ? `?${q}` : ''}`);
+  },
+
+  getGuidelines: () =>
+    fetchJson<{
+      handbook: string;
+      edition: string;
+      chapters: AicteGuidelineChapter[];
+      calculationNorms: any;
+    }>('/guidelines'),
+
+  // SIH Hackathon & AICTE Official Directorate API
+  getSihSubmissionInfo: () =>
+    fetchJson<{
+      hackathon: string;
+      problemStatementId: string;
+      problemTitle: string;
+      project: string;
+      status: string;
+      backendPort: number;
+      dualInterfaces: Array<{ id: string; name: string; description: string; demoLogin: any }>;
+      features: string[];
+      verificationPassed: string;
+    }>('/sih/submission-info'),
+
+  getOfficialOverview: () =>
+    fetchJson<{
+      officerDesk: {
+        totalApplicationsInQueue: number;
+        pendingScrutinyCount: number;
+        pendingEvcCount: number;
+        pendingCaCount: number;
+        deficiencyFlaggedCount: number;
+        approvedCount: number;
+      };
+      urgentQueue: Array<{
+        id: string;
+        institutionName: string;
+        officialId: string;
+        state: string;
+        type: string;
+        stage: string;
+        priority: string;
+        submissionDate: string;
+        deficiencyCount: number;
+      }>;
+    }>('/official/overview')
 };

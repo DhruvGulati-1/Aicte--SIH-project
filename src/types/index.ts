@@ -282,3 +282,58 @@ export interface AgentRagResult {
   modelUsed: string;
   generatedAt: string;
 }
+
+export type AicteProgramCategory =
+  | 'ENGINEERING_AND_TECHNOLOGY'
+  | 'MANAGEMENT'
+  | 'PHARMACY'
+  | 'COMPUTER_APPLICATIONS'
+  | 'ARCHITECTURE_AND_PLANNING'
+  | 'DESIGN'
+  | 'HOTEL_MANAGEMENT';
+
+export interface AicteCourse {
+  id: string;
+  program: AicteProgramCategory;
+  programLabel: string;
+  level: 'UG' | 'PG' | 'DIPLOMA' | 'INTEGRATED' | 'DOCTORAL';
+  degree: string;
+  courseName: string;
+  nomenclatureCode: string;
+  durationYears: number;
+  standardIntakeUnit: number;
+  maxDivisionsAllowed: number;
+  isEmergingArea: boolean;
+  emergingSubDomain?: string;
+  cadreRatioNorm: string; // e.g. "1:15 with 1:2:6 Cadre"
+  minFacultyPerDivision: number;
+  cadreDistribution: {
+    professors: number;
+    associateProfessors: number;
+    assistantProfessors: number;
+  };
+  minimumLabAreaSqM: number;
+  mandatoryLabs: string[];
+  eligibilityCriteria: string;
+  aphChapterReference: string;
+}
+
+export interface AicteGuidelineClause {
+  clauseNo: string;
+  heading: string;
+  content: string;
+  statutoryThreshold: string;
+  essentialEvidence: string;
+  nonComplianceConsequence: string;
+}
+
+export interface AicteGuidelineChapter {
+  id: string;
+  chapterNumber: string;
+  title: string;
+  subTitle: string;
+  description: string;
+  scope: string;
+  clauses: AicteGuidelineClause[];
+}
+

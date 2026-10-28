@@ -62,11 +62,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           localStorage.removeItem('regulaflow_token');
         }
       } else {
-        // Auto-login as OFFICER by default in dev mode for immediate usability
+        // Auto-login as INSTITUTION by default for immediate institution portal usability
         try {
           const res = await api.login({
-            email: DEMO_USERS.OFFICER.email,
-            password: DEMO_USERS.OFFICER.pass
+            email: DEMO_USERS.INSTITUTION.email,
+            password: DEMO_USERS.INSTITUTION.pass
           });
           localStorage.setItem('regulaflow_token', res.token);
           setUser(res.user);

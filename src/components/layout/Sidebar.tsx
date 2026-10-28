@@ -14,7 +14,8 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  GraduationCap
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.js';
 
@@ -28,13 +29,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle }) => {
 
   const navigation = [
     { name: 'Dashboard', to: '/', icon: LayoutDashboard },
+    { name: 'AICTE Official Portal', to: '/official', icon: ShieldCheck, badge: 'Official' },
+    { name: 'AICTE Courses', to: '/courses', icon: GraduationCap, badge: 'Catalog' },
+    { name: 'Guidelines & Norms', to: '/guidelines', icon: BookOpen, badge: 'APH 26-27' },
     { name: 'Applications', to: '/applications', icon: FileText },
     { name: 'Document Scrutiny', to: '/scrutiny', icon: CheckSquare },
     { name: 'Institutions', to: '/institutions', icon: Building2 },
     { name: 'Compliance Monitor', to: '/compliance', icon: ShieldCheck },
     { name: 'Expert Visits (EVC)', to: '/evc', icon: CalendarCheck },
     { name: 'AI Agent Center', to: '/agents', icon: Bot, badge: '5 Agents' },
-    { name: 'Regulatory Knowledge', to: '/knowledge', icon: BookOpen },
+    { name: 'RAG Knowledge', to: '/knowledge', icon: Sparkles },
     { name: 'Reports & Analytics', to: '/reports', icon: BarChart3 },
     { name: 'Audit Trail', to: '/audit', icon: History },
     { name: 'Settings & SLA', to: '/settings', icon: Settings },

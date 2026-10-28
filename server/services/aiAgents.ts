@@ -157,13 +157,16 @@ Return ONLY valid JSON matching this schema:
   ]
 }`;
 
-      const res = await aiClient.models.generateContent({
-        model: modelName,
-        contents: prompt,
-        config: {
-          responseMimeType: 'application/json',
-        }
-      });
+      const res = await callWithTimeout(
+        aiClient.models.generateContent({
+          model: modelName,
+          contents: prompt,
+          config: {
+            responseMimeType: 'application/json',
+          }
+        }),
+        2500
+      );
 
       const parsed = JSON.parse(res.text || '{}');
       if (Array.isArray(parsed.additionalFindings)) {
@@ -449,17 +452,20 @@ export async function runRiskAgent(
   // If Gemini available, obtain deeper synthesis
   if (aiClient) {
     try {
-      const res = await aiClient.models.generateContent({
-        model: modelName,
-        contents: `Provide a concise 2-sentence qualitative risk breakdown for AICTE review:
+      const res = await callWithTimeout(
+        aiClient.models.generateContent({
+          model: modelName,
+          contents: `Provide a concise 2-sentence qualitative risk breakdown for AICTE review:
 Institution: ${application.institutionName}
 Application Type: ${application.applicationType}
 Score: ${deterministicScore}/100 (${riskLevel})
 Factors: ${JSON.stringify(factors)}`,
-        config: {
-          systemInstruction: 'You are an objective regulatory audit assistant. Return plain text only.',
-        }
-      });
+          config: {
+            systemInstruction: 'You are an objective regulatory audit assistant. Return plain text only.',
+          }
+        }),
+        2500
+      );
       if (res.text) {
         qualitativeAnalysis = res.text.trim();
       }
@@ -548,13 +554,16 @@ ${contextText}
 QUESTION:
 ${query}`;
 
-      const res = await aiClient.models.generateContent({
-        model: modelName,
-        contents: prompt,
-        config: {
-          systemInstruction: 'You are an authoritative government regulatory compliance specialist. Distinguish official text from guidance.',
-        }
-      });
+      const res = await callWithTimeout(
+        aiClient.models.generateContent({
+          model: modelName,
+          contents: prompt,
+          config: {
+            systemInstruction: 'You are an authoritative government regulatory compliance specialist. Distinguish official text from guidance.',
+          }
+        }),
+        2500
+      );
       answer = res.text?.trim() || 'Unable to generate response from model.';
     } catch (err: any) {
       console.warn('[AI Agent 5] Gemini RAG fallback to direct excerpting:', err.message);

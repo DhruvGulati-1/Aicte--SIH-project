@@ -13,8 +13,9 @@ import {
   Trash2
 } from 'lucide-react';
 import { api } from '../services/api.js';
-import { Institution, ApplicationType, WorkflowPath, PriorityLevel } from '../types/index.js';
+import { Institution, ApplicationType, WorkflowPath, PriorityLevel, AicteCourse } from '../types/index.js';
 import { useAuth } from '../context/AuthContext.js';
+import { AICTE_COURSES } from '../data/aicteCoursesData.js';
 
 export const NewApplicationWizard: React.FC = () => {
   const navigate = useNavigate();
@@ -39,10 +40,11 @@ export const NewApplicationWizard: React.FC = () => {
 
   // Programs & Intake
   const [programs, setPrograms] = useState<string[]>([
-    'B.Tech Computer Science & Engineering (60 seats)',
-    'B.Tech Electronics & Communication (60 seats)'
+    'B.Tech in Artificial Intelligence & Machine Learning [AICTE-ENG-UG-101] (Intake: 60)',
+    'B.Tech in Computer Science & Engineering [AICTE-ENG-UG-102] (Intake: 60)'
   ]);
-  const [newProgramInput, setNewProgramInput] = useState('');
+  const [selectedCatalogCourseId, setSelectedCatalogCourseId] = useState<string>(AICTE_COURSES[0].id);
+  const [customProgramInput, setCustomProgramInput] = useState('');
   const [totalIntake, setTotalIntake] = useState(120);
 
   // Documents
@@ -73,10 +75,22 @@ export const NewApplicationWizard: React.FC = () => {
     loadInsts();
   }, [user]);
 
-  const addProgram = () => {
-    if (newProgramInput.trim()) {
-      setPrograms([...programs, newProgramInput.trim()]);
-      setNewProgramInput('');
+  const addAicteCatalogCourse = () => {
+    const found = AICTE_COURSES.find(c => c.id === selectedCatalogCourseId);
+    if (found) {
+      const entry = `${found.degree} in ${found.courseName} [${found.nomenclatureCode}] (Intake: ${found.standardIntakeUnit})`;
+      if (!programs.includes(entry)) {
+        setPrograms(prev => [...prev, entry]);
+        setTotalIntake(prev => prev + found.standardIntakeUnit);
+      }
+    }
+  };
+
+  const addCustomProgram = () => {
+    if (customProgramInput.trim()) {
+      setPrograms(prev => [...prev, customProgramInput.trim()]);
+      setCustomProgramInput('');
+      setTotalIntake(prev => prev + 60);
     }
   };
 
@@ -323,29 +337,87 @@ export const NewApplicationWizard: React.FC = () => {
 
         {/* STEP 4: Programs & Intake Capacity */}
         {step === 4 && (
-          <div className="space-y-4">
-            <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">Academic Programs & Intake Breakdown</h2>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                placeholder="e.g. M.Tech Artificial Intelligence & Robotics (Intake: 30)"
-                value={newProgramInput}
-                onChange={e => setNewProgramInput(e.target.value)}
-                className="flex-1 text-xs p-2.5 rounded-md border border-slate-200 focus:outline-hidden"
-              />
-              <button
-                onClick={addProgram}
-                className="px-3 py-2 text-xs font-semibold bg-slate-800 text-white rounded-md hover:bg-slate-900"
-              >
-                Add Program
-              </button>
+          <div className="space-y-4 text-xs">
+            <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-2">Academic Programs & Official AICTE Nomenclature</h2>
+            <p className="text-slate-500">
+              Select standardized programs from the official AICTE Approval Process Handbook (APH 2026-27) catalog.
+            </p>
+
+            {/* Official Catalog Dropdown Picker */}
+            <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-200/90 space-y-3">
+              <label className="font-bold text-blue-950 block">Select from AICTE Approved Courses:</label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <select
+                  value={selectedCatalogCourseId}
+                  onChange={e => setSelectedCatalogCourseId(e.target.value)}
+                  className="flex-1 p-2.5 rounded-lg border border-blue-200 bg-white font-medium text-slate-800 focus:outline-hidden"
+                >
+                  {AICTE_COURSES.map(c => (
+                    <option key={c.id} value={c.id}>
+                      [{c.nomenclatureCode}] {c.degree} in {c.courseName} — {c.programLabel} (Intake: {c.standardIntakeUnit}) {c.isEmergingArea ? '★ Emerging' : ''}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={addAicteCatalogCourse}
+                  className="px-4 py-2 text-xs font-bold bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shrink-0 shadow-xs"
+                >
+                  + Add AICTE Course
+                </button>
+              </div>
+
+              {/* Show selected course details */}
+              {(() => {
+                const active = AICTE_COURSES.find(c => c.id === selectedCatalogCourseId);
+                if (!active) return null;
+                return (
+                  <div className="p-2.5 rounded-lg bg-white border border-blue-100 text-[11px] text-slate-600 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div>
+                      <span className="text-slate-400 block">Cadre Ratio Norm:</span>
+                      <strong className="text-slate-800">{active.cadreRatioNorm}</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block">Min Lab Space:</span>
+                      <strong className="text-slate-800">{active.minimumLabAreaSqM} m²</strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block">Max Approved Units:</span>
+                      <strong className="text-slate-800">{active.maxDivisionsAllowed} Divisions ({active.maxDivisionsAllowed * active.standardIntakeUnit} seats)</strong>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
-            <div className="space-y-2">
+            {/* Custom Program Entry */}
+            <div className="space-y-1 pt-1">
+              <label className="font-semibold text-slate-700 block">Or Add Custom / Interdisciplinary Program:</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="e.g. M.Tech Autonomous Aerial Vehicles (Intake: 30)"
+                  value={customProgramInput}
+                  onChange={e => setCustomProgramInput(e.target.value)}
+                  className="flex-1 text-xs p-2.5 rounded-md border border-slate-200 focus:outline-hidden"
+                />
+                <button
+                  type="button"
+                  onClick={addCustomProgram}
+                  className="px-3 py-2 text-xs font-semibold bg-slate-800 text-white rounded-md hover:bg-slate-900"
+                >
+                  Add Custom
+                </button>
+              </div>
+            </div>
+
+            {/* Selected Programs List */}
+            <div className="space-y-2 pt-2">
+              <label className="font-bold text-slate-800 block">Proposed Program List for AY 2026-27:</label>
               {programs.map((p, idx) => (
                 <div key={idx} className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs flex items-center justify-between">
                   <span className="font-medium text-slate-800">{p}</span>
-                  <button onClick={() => removeProgram(idx)} className="text-rose-500 hover:text-rose-700">
+                  <button type="button" onClick={() => removeProgram(idx)} className="text-rose-500 hover:text-rose-700 p-1">
                     <Trash2 size={14} />
                   </button>
                 </div>
@@ -358,7 +430,7 @@ export const NewApplicationWizard: React.FC = () => {
                 type="number"
                 value={totalIntake}
                 onChange={e => setTotalIntake(parseInt(e.target.value) || 0)}
-                className="w-48 p-2.5 rounded-md border border-slate-200 focus:outline-hidden"
+                className="w-48 p-2.5 rounded-md border border-slate-200 focus:outline-hidden font-bold text-blue-700"
               />
             </div>
           </div>

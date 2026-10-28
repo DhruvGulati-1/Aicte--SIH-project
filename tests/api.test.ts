@@ -78,7 +78,34 @@ async function runTests() {
   assert(ragRes.sources[0].sourceTitle.includes('Faculty Cadre Ratio'), 'Must cite correct regulation');
   console.log(`  ✔ Regulatory RAG verified (Cited: ${ragRes.sources[0].sourceTitle}).`);
 
-  console.log('\n✅ ALL 7 AUTOMATED REGULATORY TESTS PASSED SUCCESSFULLY!\n');
+  // Test 8: AICTE Courses & Nomenclature Catalog
+  console.log('▶ Test 8: AICTE Approved Courses & Nomenclature Catalog...');
+  const { AICTE_COURSES } = await import('../src/data/aicteCoursesData.js');
+  assert(AICTE_COURSES.length >= 20, 'Must have at least 20 official AICTE courses cataloged');
+  const aiml = AICTE_COURSES.find(c => c.id === 'course-ug-ai-ml');
+  assert(aiml !== undefined, 'Artificial Intelligence & Machine Learning course must be present');
+  assert.strictEqual(aiml?.nomenclatureCode, 'AICTE-ENG-UG-101');
+  assert(aiml?.cadreRatioNorm.includes('1:15'), 'Cadre ratio must specify 1:15');
+  assert(aiml?.mandatoryLabs.length > 0, 'Mandatory labs must be specified');
+  console.log(`  ✔ AICTE Courses catalog verified (${AICTE_COURSES.length} courses loaded across disciplines).`);
+
+  // Test 9: AICTE Guidelines & Statutory Norms
+  console.log('▶ Test 9: AICTE Approval Process Handbook (APH) Guidelines...');
+  const { AICTE_GUIDELINE_CHAPTERS, AICTE_CALCULATION_NORMS } = await import('../src/data/aicteGuidelinesData.js');
+  assert(AICTE_GUIDELINE_CHAPTERS.length >= 5, 'Must have at least 5 chapters of APH guidelines');
+  assert(AICTE_CALCULATION_NORMS.landRequirements.metro.minAcres >= 2.5, 'Mega Metro land norm must be >= 2.50 acres');
+  assert.strictEqual(AICTE_CALCULATION_NORMS.cadreRatioEngineeringUG.cadreRatio, '1:2:6');
+  console.log(`  ✔ AICTE Guidelines & Norms verified (${AICTE_GUIDELINE_CHAPTERS.length} chapters, Cadre 1:2:6 & STR 1:15).`);
+
+  // Test 10: SIH26262 Dual Interfaces & Official Desk Metadata
+  console.log('▶ Test 10: SIH26262 Dual Interfaces (Institution & AICTE Official)...');
+  const institutionUser = store.users.find(u => u.role === 'INSTITUTION');
+  const officialUser = store.users.find(u => u.role === 'OFFICER');
+  assert(institutionUser && institutionUser.institutionId === 'inst-001', 'Interface 1: Institution portal user verified');
+  assert(officialUser && officialUser.email === 'officer.sharma@aicte-india.org', 'Interface 2: AICTE Official portal user verified');
+  console.log('  ✔ Dual Interfaces verified (1. Institution Portal, 2. AICTE Official Directorate).');
+
+  console.log('\n✅ ALL 10 AUTOMATED REGULATORY & SIH TESTS PASSED SUCCESSFULLY!\n');
 }
 
 runTests().catch(err => {
